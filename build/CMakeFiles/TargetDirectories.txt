@@ -1,0 +1,3 @@
+C:/Users/denilson/Desktop/black_hole/build/CMakeFiles/buraco_negro.dir
+C:/Users/denilson/Desktop/black_hole/build/CMakeFiles/edit_cache.dir
+C:/Users/denilson/Desktop/black_hole/build/CMakeFiles/rebuild_cache.dir

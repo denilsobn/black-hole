@@ -1,0 +1,514 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global/global}
+    \entry{bozza2002strong}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=e22a1d87ca379200609aad7ea4f55cc5}{%
+           family={Bozza},
+           familyi={B\bibinitperiod},
+           given={Valerio},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e22a1d87ca379200609aad7ea4f55cc5}
+      \strng{fullhash}{e22a1d87ca379200609aad7ea4f55cc5}
+      \strng{fullhashraw}{e22a1d87ca379200609aad7ea4f55cc5}
+      \strng{bibnamehash}{e22a1d87ca379200609aad7ea4f55cc5}
+      \strng{authorbibnamehash}{e22a1d87ca379200609aad7ea4f55cc5}
+      \strng{authornamehash}{e22a1d87ca379200609aad7ea4f55cc5}
+      \strng{authorfullhash}{e22a1d87ca379200609aad7ea4f55cc5}
+      \strng{authorfullhashraw}{e22a1d87ca379200609aad7ea4f55cc5}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Physical Review D}
+      \field{number}{10}
+      \field{title}{Gravitational lensing in the strong field limit}
+      \field{volume}{66}
+      \field{year}{2002}
+      \field{pages}{103001}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevD.66.103001
+      \endverb
+    \endentry
+    \entry{einstein1936lens}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=3ebf53e52a3ce84f0ffb8553200a6a63}{%
+           family={Einstein},
+           familyi={E\bibinitperiod},
+           given={Albert},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{3ebf53e52a3ce84f0ffb8553200a6a63}
+      \strng{fullhash}{3ebf53e52a3ce84f0ffb8553200a6a63}
+      \strng{fullhashraw}{3ebf53e52a3ce84f0ffb8553200a6a63}
+      \strng{bibnamehash}{3ebf53e52a3ce84f0ffb8553200a6a63}
+      \strng{authorbibnamehash}{3ebf53e52a3ce84f0ffb8553200a6a63}
+      \strng{authornamehash}{3ebf53e52a3ce84f0ffb8553200a6a63}
+      \strng{authorfullhash}{3ebf53e52a3ce84f0ffb8553200a6a63}
+      \strng{authorfullhashraw}{3ebf53e52a3ce84f0ffb8553200a6a63}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Science}
+      \field{number}{2188}
+      \field{title}{Lens-like action of a star by the deviation of light in the gravitational field}
+      \field{volume}{84}
+      \field{year}{1936}
+      \field{pages}{506\bibrangedash 507}
+      \range{pages}{2}
+      \verb{doi}
+      \verb 10.1126/science.84.2188.506
+      \endverb
+    \endentry
+    \entry{hartle2003gravity}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=1ac7eee9cbb87f927beacb5616f7f48a}{%
+           family={Hartle},
+           familyi={H\bibinitperiod},
+           given={James\bibnamedelima B.},
+           giveni={J\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {San Francisco}%
+      }
+      \list{publisher}{1}{%
+        {Addison-Wesley}%
+      }
+      \strng{namehash}{1ac7eee9cbb87f927beacb5616f7f48a}
+      \strng{fullhash}{1ac7eee9cbb87f927beacb5616f7f48a}
+      \strng{fullhashraw}{1ac7eee9cbb87f927beacb5616f7f48a}
+      \strng{bibnamehash}{1ac7eee9cbb87f927beacb5616f7f48a}
+      \strng{authorbibnamehash}{1ac7eee9cbb87f927beacb5616f7f48a}
+      \strng{authornamehash}{1ac7eee9cbb87f927beacb5616f7f48a}
+      \strng{authorfullhash}{1ac7eee9cbb87f927beacb5616f7f48a}
+      \strng{authorfullhashraw}{1ac7eee9cbb87f927beacb5616f7f48a}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Gravity: an introduction to Einstein's general relativity}
+      \field{year}{2003}
+    \endentry
+    \entry{james2015interstellar}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=cd974ca7081e1ac918ea90c655627023}{%
+           family={James},
+           familyi={J\bibinitperiod},
+           given={Oliver},
+           giveni={O\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3b5693ea644759cc4faff6001f72587a}{%
+           family={Tunzelmann},
+           familyi={T\bibinitperiod},
+           given={Eugénie},
+           giveni={E\bibinitperiod},
+           givenun=0,
+           prefix={von},
+           prefixi={v\bibinitperiod},
+           prefixun=0}}%
+        {{un=0,uniquepart=base,hash=467131be87cf45e1cd7679d149c2fa28}{%
+           family={Franklin},
+           familyi={F\bibinitperiod},
+           given={Paul},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=09e928bef0c66042b777c23f5eb91c00}{%
+           family={Thorne},
+           familyi={T\bibinitperiod},
+           given={Kip\bibnamedelima S.},
+           giveni={K\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{8efa8e519bdcc1e7be2fe8a859676940}
+      \strng{fullhash}{94d1379ded7f51cd59182f1faaa38e43}
+      \strng{fullhashraw}{94d1379ded7f51cd59182f1faaa38e43}
+      \strng{bibnamehash}{8efa8e519bdcc1e7be2fe8a859676940}
+      \strng{authorbibnamehash}{8efa8e519bdcc1e7be2fe8a859676940}
+      \strng{authornamehash}{8efa8e519bdcc1e7be2fe8a859676940}
+      \strng{authorfullhash}{94d1379ded7f51cd59182f1faaa38e43}
+      \strng{authorfullhashraw}{94d1379ded7f51cd59182f1faaa38e43}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Classical and Quantum Gravity}
+      \field{number}{6}
+      \field{title}{Gravitational lensing by spinning black holes in astrophysics, and in the movie Interstellar}
+      \field{volume}{32}
+      \field{year}{2015}
+      \field{pages}{065001}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1088/0264-9381/32/6/065001
+      \endverb
+    \endentry
+    \entry{limajunior2021sombras}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=0c40463a493a18b5c9b457f7b6ec105c}{%
+           family={Lima\bibnamedelima Junior},
+           familyi={L\bibinitperiod\bibinitdelim J\bibinitperiod},
+           given={Haroldo\bibnamedelimb C.\bibnamedelimi D.},
+           giveni={H\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4cf51e650b8ee47b7404107a9b3f39f7}{%
+           family={Cunha},
+           familyi={C\bibinitperiod},
+           given={Pedro\bibnamedelimb V.\bibnamedelimi P.},
+           giveni={P\bibinitperiod\bibinitdelim V\bibinitperiod\bibinitdelim P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1e21f05a696d5563d0e8164823cd2aa9}{%
+           family={Herdeiro},
+           familyi={H\bibinitperiod},
+           given={Carlos\bibnamedelimb A.\bibnamedelimi R.},
+           giveni={C\bibinitperiod\bibinitdelim A\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=747058de9b970e05d946d48d4efff4dc}{%
+           family={Crispino},
+           familyi={C\bibinitperiod},
+           given={Luís\bibnamedelimb C.\bibnamedelimi B.},
+           giveni={L\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{0b1cb63383fbf2fd80de066f5187d1e0}
+      \strng{fullhash}{742e3476ea8e758bf49f0266230d1df9}
+      \strng{fullhashraw}{742e3476ea8e758bf49f0266230d1df9}
+      \strng{bibnamehash}{0b1cb63383fbf2fd80de066f5187d1e0}
+      \strng{authorbibnamehash}{0b1cb63383fbf2fd80de066f5187d1e0}
+      \strng{authornamehash}{0b1cb63383fbf2fd80de066f5187d1e0}
+      \strng{authorfullhash}{742e3476ea8e758bf49f0266230d1df9}
+      \strng{authorfullhashraw}{742e3476ea8e758bf49f0266230d1df9}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Revista Brasileira de Ensino de Física}
+      \field{title}{Sombras de buracos negros: desvendando a física por detrás da imagem de {M87}}
+      \field{volume}{43}
+      \field{year}{2021}
+      \verb{doi}
+      \verb 10.1590/1806-9126-RBEF-2020-0232
+      \endverb
+    \endentry
+    \entry{luminet1979image}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9e0aef055bcf20dec996b687a7cd86e8}{%
+           family={Luminet},
+           familyi={L\bibinitperiod},
+           given={Jean-Pierre},
+           giveni={J\bibinithyphendelim P\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{9e0aef055bcf20dec996b687a7cd86e8}
+      \strng{fullhash}{9e0aef055bcf20dec996b687a7cd86e8}
+      \strng{fullhashraw}{9e0aef055bcf20dec996b687a7cd86e8}
+      \strng{bibnamehash}{9e0aef055bcf20dec996b687a7cd86e8}
+      \strng{authorbibnamehash}{9e0aef055bcf20dec996b687a7cd86e8}
+      \strng{authornamehash}{9e0aef055bcf20dec996b687a7cd86e8}
+      \strng{authorfullhash}{9e0aef055bcf20dec996b687a7cd86e8}
+      \strng{authorfullhashraw}{9e0aef055bcf20dec996b687a7cd86e8}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Astronomy and Astrophysics}
+      \field{title}{Image of a spherical black hole with thin accretion disk}
+      \field{volume}{75}
+      \field{year}{1979}
+      \field{pages}{228\bibrangedash 235}
+      \range{pages}{8}
+    \endentry
+    \entry{muller2012thindisc}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=c2ad285eb682bccdfe2685694db2188f}{%
+           family={Müller},
+           familyi={M\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8fd55bab12d3eb9bd3e53f31308be9bc}{%
+           family={Frauendiener},
+           familyi={F\bibinitperiod},
+           given={Jörg},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4a79073932f250c45ed86548a5bbb1dd}
+      \strng{fullhash}{4a79073932f250c45ed86548a5bbb1dd}
+      \strng{fullhashraw}{4a79073932f250c45ed86548a5bbb1dd}
+      \strng{bibnamehash}{4a79073932f250c45ed86548a5bbb1dd}
+      \strng{authorbibnamehash}{4a79073932f250c45ed86548a5bbb1dd}
+      \strng{authornamehash}{4a79073932f250c45ed86548a5bbb1dd}
+      \strng{authorfullhash}{4a79073932f250c45ed86548a5bbb1dd}
+      \strng{authorfullhashraw}{4a79073932f250c45ed86548a5bbb1dd}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{European Journal of Physics}
+      \field{number}{4}
+      \field{title}{Interactive visualization of a thin disc around a Schwarzschild black hole}
+      \field{volume}{33}
+      \field{year}{2012}
+      \field{pages}{955\bibrangedash 963}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1088/0143-0807/33/4/955
+      \endverb
+    \endentry
+    \entry{poutanen2020bending}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=af9e5597f28653025384db64f50aac7e}{%
+           family={Poutanen},
+           familyi={P\bibinitperiod},
+           given={Juri},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{af9e5597f28653025384db64f50aac7e}
+      \strng{fullhash}{af9e5597f28653025384db64f50aac7e}
+      \strng{fullhashraw}{af9e5597f28653025384db64f50aac7e}
+      \strng{bibnamehash}{af9e5597f28653025384db64f50aac7e}
+      \strng{authorbibnamehash}{af9e5597f28653025384db64f50aac7e}
+      \strng{authornamehash}{af9e5597f28653025384db64f50aac7e}
+      \strng{authorfullhash}{af9e5597f28653025384db64f50aac7e}
+      \strng{authorfullhashraw}{af9e5597f28653025384db64f50aac7e}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Astronomy \& Astrophysics}
+      \field{title}{Accurate analytic formula for light bending in the Schwarzschild metric}
+      \field{volume}{640}
+      \field{year}{2020}
+      \field{pages}{A24}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1051/0004-6361/202037471
+      \endverb
+    \endentry
+    \entry{sousa2005refraction}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=2efb3d2fcf52bf4ff150a37cabbf9616}{%
+           family={Sousa},
+           familyi={S\bibinitperiod},
+           given={Tiago},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=c69ff00a5e1719a4ad2dddd6254ac3c9}{%
+           family={Pharr},
+           familyi={P\bibinitperiod},
+           given={Matt},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Boston}%
+      }
+      \list{publisher}{1}{%
+        {Addison-Wesley}%
+      }
+      \strng{namehash}{2efb3d2fcf52bf4ff150a37cabbf9616}
+      \strng{fullhash}{2efb3d2fcf52bf4ff150a37cabbf9616}
+      \strng{fullhashraw}{2efb3d2fcf52bf4ff150a37cabbf9616}
+      \strng{bibnamehash}{2efb3d2fcf52bf4ff150a37cabbf9616}
+      \strng{authorbibnamehash}{2efb3d2fcf52bf4ff150a37cabbf9616}
+      \strng{authornamehash}{2efb3d2fcf52bf4ff150a37cabbf9616}
+      \strng{authorfullhash}{2efb3d2fcf52bf4ff150a37cabbf9616}
+      \strng{authorfullhashraw}{2efb3d2fcf52bf4ff150a37cabbf9616}
+      \strng{editorbibnamehash}{c69ff00a5e1719a4ad2dddd6254ac3c9}
+      \strng{editornamehash}{c69ff00a5e1719a4ad2dddd6254ac3c9}
+      \strng{editorfullhash}{c69ff00a5e1719a4ad2dddd6254ac3c9}
+      \strng{editorfullhashraw}{c69ff00a5e1719a4ad2dddd6254ac3c9}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{GPU Gems 2: Programming Techniques for High-Performance Graphics and General-Purpose Computation}
+      \field{chapter}{19}
+      \field{title}{Generic Refraction Simulation}
+      \field{year}{2005}
+      \field{pages}{295\bibrangedash 305}
+      \range{pages}{11}
+    \endentry
+    \entry{sun2025learning}{inproceedings}{}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=383cab656d579039f18b42f59d5725e6}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Mingyuan},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=743671a1da3500b316f94b6bc0c4e035}{%
+           family={Fang},
+           familyi={F\bibinitperiod},
+           given={Zheng},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c1084309c890d931f383e64c50a504b1}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Jiaxu},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=80be20af1319ff6ef948e6e7774c5467}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Kunyi},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=08c1e9a58399d68669c800dc1ee6607b}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Qiang},
+           giveni={Q\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6e68b5d3bd73f2c9a4f908176a2f9687}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Renjing},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{685e7127d203ee34e6e3836560f44529}
+      \strng{fullhash}{25913eb6e1c00b2334ce471d10a90c5b}
+      \strng{fullhashraw}{25913eb6e1c00b2334ce471d10a90c5b}
+      \strng{bibnamehash}{685e7127d203ee34e6e3836560f44529}
+      \strng{authorbibnamehash}{685e7127d203ee34e6e3836560f44529}
+      \strng{authornamehash}{685e7127d203ee34e6e3836560f44529}
+      \strng{authorfullhash}{25913eb6e1c00b2334ce471d10a90c5b}
+      \strng{authorfullhashraw}{25913eb6e1c00b2334ce471d10a90c5b}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}
+      \field{eprinttype}{arXiv}
+      \field{title}{Learning null geodesics for gravitational lensing rendering in general relativity}
+      \field{year}{2025}
+      \verb{eprint}
+      \verb 2507.15775
+      \endverb
+    \endentry
+    \entry{synge1966escape}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c1b19d4ed9c2f9c90567b8c916c0596f}{%
+           family={Synge},
+           familyi={S\bibinitperiod},
+           given={John\bibnamedelima Lighton},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{c1b19d4ed9c2f9c90567b8c916c0596f}
+      \strng{fullhash}{c1b19d4ed9c2f9c90567b8c916c0596f}
+      \strng{fullhashraw}{c1b19d4ed9c2f9c90567b8c916c0596f}
+      \strng{bibnamehash}{c1b19d4ed9c2f9c90567b8c916c0596f}
+      \strng{authorbibnamehash}{c1b19d4ed9c2f9c90567b8c916c0596f}
+      \strng{authornamehash}{c1b19d4ed9c2f9c90567b8c916c0596f}
+      \strng{authorfullhash}{c1b19d4ed9c2f9c90567b8c916c0596f}
+      \strng{authorfullhashraw}{c1b19d4ed9c2f9c90567b8c916c0596f}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Monthly Notices of the Royal Astronomical Society}
+      \field{number}{3}
+      \field{title}{The escape of photons from gravitationally intense stars}
+      \field{volume}{131}
+      \field{year}{1966}
+      \field{pages}{463\bibrangedash 466}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1093/mnras/131.3.463
+      \endverb
+    \endentry
+    \entry{verbraeck2021interactive}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=b3debd569e909fee0f95867d0370aa87}{%
+           family={Verbraeck},
+           familyi={V\bibinitperiod},
+           given={Annemieke},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=66261bb4bc4ee0f6682ca97c8e900b32}{%
+           family={Eisemann},
+           familyi={E\bibinitperiod},
+           given={Elmar},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{990fd471d4cdbd627ac2ebab9caa6916}
+      \strng{fullhash}{990fd471d4cdbd627ac2ebab9caa6916}
+      \strng{fullhashraw}{990fd471d4cdbd627ac2ebab9caa6916}
+      \strng{bibnamehash}{990fd471d4cdbd627ac2ebab9caa6916}
+      \strng{authorbibnamehash}{990fd471d4cdbd627ac2ebab9caa6916}
+      \strng{authornamehash}{990fd471d4cdbd627ac2ebab9caa6916}
+      \strng{authorfullhash}{990fd471d4cdbd627ac2ebab9caa6916}
+      \strng{authorfullhashraw}{990fd471d4cdbd627ac2ebab9caa6916}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Visualization and Computer Graphics}
+      \field{number}{2}
+      \field{title}{Interactive Black-Hole Visualization}
+      \field{volume}{27}
+      \field{year}{2021}
+      \field{pages}{796\bibrangedash 805}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1109/TVCG.2020.3030452
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
