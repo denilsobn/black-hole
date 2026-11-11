@@ -1,0 +1,76 @@
+# Compilacao fora da arvore e dependencias locais
+/build/
+/build-*/
+/cmake-build-*/
+/vcpkg/
+/vcpkg_installed/
+
+# CMake gerado acidentalmente na raiz
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/CTestTestfile.cmake
+/Testing/
+/install_manifest.txt
+/compile_commands.json
+/CMakeUserPresets.json
+
+# Objetos, bibliotecas e executaveis
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.pdb
+*.ilk
+
+# LaTeX: manter fontes, bibliografia, dados e figuras do artigo
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+/docs/latex
+
+
+# Saidas temporarias (figuras e dados publicados sao versionados)
+*.tmp
+*.tmp.png
+*.bak
+*~
+*.swp
+*.swo
+/capturas/
+/resultados/
+
+# Configuracoes locais de IDE e sistema
+/.vs/
+/.vscode/
+/.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Credenciais e configuracao privada
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+/credentials.json
+/secrets.json
+/.aws/
+

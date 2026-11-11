@@ -1,32 +1,8 @@
-// =====================================================================
-//  valida_rk4.cpp -- verificacao numerica do integrador geodesico
-//
-//  Roda o MESMO passo de Runge-Kutta 4 de shaders/geodesic.frag, mas em
-//  double e na CPU, e compara o resultado com dois valores analiticos
-//  conhecidos da metrica de Schwarzschild:
-//
-//    1) o parametro de impacto critico de captura,  b_c = 3*sqrt(3)*M;
-//    2) a deflexao no campo fraco,
-//         dphi = 4M/b + 15*pi*M^2/(4*b^2) + O(b^-3).
-//
-//  Serve para a secao de validacao do artigo: os numeros da tabela do
-//  README saem daqui, e qualquer um pode regerar com
-//
-//      mingw32-make valida        (Windows/MSYS2)
-//      make valida                (Linux/macOS)
-//
-//  Nao depende de OpenGL nem de vcpkg -- e so g++ e a biblioteca padrao.
-// =====================================================================
 #include <cstdio>
 #include <cmath>
 
 static const double PI = 3.14159265358979323846;
 
-// ---------------------------------------------------------------------
-// Um passo de RK4 em
-//     du/dphi = w ,   dw/dphi = -u + 3*M*u^2
-// Identico ao laco do shader.
-// ---------------------------------------------------------------------
 static void rk4Step(double& u, double& w, double M, double h) {
     const double k1u = w;
     const double k1w = -u + 3.0 * M * u * u;
@@ -47,15 +23,10 @@ static void rk4Step(double& u, double& w, double M, double h) {
     w += (h / 6.0) * (k1w + 2.0 * k2w + 2.0 * k3w + k4w);
 }
 
-// ---------------------------------------------------------------------
-// Teste 1: um foton lancado de r0 com parametro de impacto b cai no
-// horizonte ou escapa? Usa a mesma condicao inicial do shader:
-//     u(0) = 1/r0 ,  w(0) = -cos(alpha)/b ,  b = r0*sin(alpha)
-// ---------------------------------------------------------------------
 static bool cai(double r0, double b, double M, double h, long maxSteps) {
     double sina = b / r0;
     if (sina > 1.0) sina = 1.0;
-    const double alpha = PI - asin(sina);      // ramo que entra
+    const double alpha = PI - asin(sina);
     double u = 1.0 / r0;
     double w = -cos(alpha) / b;
 
@@ -71,12 +42,8 @@ static bool cai(double r0, double b, double M, double h, long maxSteps) {
     return false;
 }
 
-// ---------------------------------------------------------------------
-// Teste 2: deflexao total. Integra do perielio (w = 0) ate u = 0 e
-// dobra, subtraindo pi. O perielio sai de  u_p^2 (1 - 2 M u_p) = 1/b^2.
-// ---------------------------------------------------------------------
 static double perielioU(double b, double M) {
-    double lo = 0.0, hi = 1.0 / (3.0 * M);     // esfera de fotons
+    double lo = 0.0, hi = 1.0 / (3.0 * M);
     for (int i = 0; i < 200; i++) {
         const double mid = 0.5 * (lo + hi);
         const double f = mid * mid * (1.0 - 2.0 * M * mid) - 1.0 / (b * b);
@@ -95,7 +62,7 @@ static double deflexao(double b, double M, double h, long maxSteps) {
         rk4Step(u, w, M, h);
         phi += h;
         if (u <= 0.0) {
-            const double f = uPrev / (uPrev - u);   // interpola u = 0
+            const double f = uPrev / (uPrev - u);
             return 2.0 * (phiPrev + f * (phi - phiPrev)) - PI;
         }
     }
@@ -103,16 +70,15 @@ static double deflexao(double b, double M, double h, long maxSteps) {
 }
 
 int main() {
-    const double M  = 1.0;      // unidades geometrizadas, G = c = 1
+    const double M  = 1.0;
     const double Rs = 2.0 * M;
 
     std::printf("=========================================================\n");
     std::printf(" Validacao do RK4 de shaders/geodesic.frag   (M = 1)\n");
     std::printf("=========================================================\n");
 
-    // ---- Teste 1 -------------------------------------------------
     const double bcExato = 3.0 * std::sqrt(3.0) * M;
-    double lo = 3.0 * M, hi = 10.0 * M;        // lo cai, hi escapa
+    double lo = 3.0 * M, hi = 10.0 * M;
     for (int i = 0; i < 60; i++) {
         const double mid = 0.5 * (lo + hi);
         if (cai(1.0e4 * M, mid, M, 1e-4, 2000000L)) lo = mid; else hi = mid;
@@ -125,7 +91,6 @@ int main() {
     std::printf("    erro relativo = %.3e\n", std::fabs(bc - bcExato) / bcExato);
     std::printf("    b_c/Rs = %.9f   (esperado 2.598076211)\n", bc / Rs);
 
-    // ---- Teste 2 -------------------------------------------------
     std::printf("\n[2] Deflexao total (h = 1e-4 rad)\n");
     std::printf("    %8s %16s %16s %16s %11s\n",
                 "b/M", "RK4", "4M/b", "+15pi M^2/4b^2", "dif. rel.");
@@ -142,7 +107,6 @@ int main() {
     std::printf("    b -> b_c = %.4f M. Ali o valor correto e o do RK4, nao o\n", bcExato);
     std::printf("    da serie truncada.\n");
 
-    // ---- Teste 3 -------------------------------------------------
     std::printf("\n[3] Efeito do passo em phi (b = 10 M)\n");
     std::printf("    %10s %18s %14s\n", "h", "deflexao", "|dif. vs h=1e-6|");
     const double ref = deflexao(10.0, M, 1e-6, 2000000000L);

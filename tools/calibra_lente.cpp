@@ -1,32 +1,3 @@
-// =====================================================================
-//  calibra_lente.cpp -- calibracao da heuristica de lente fina
-//
-//  1) TREINO. Calcula por RK4 o angulo de deflexao exato alpha(b) de um
-//     foton que vem do infinito e volta ao infinito, para N parametros
-//     de impacto b > b_c, e ajusta por minimos quadrados
-//
-//        alpha(x) = -ln(1 - x) + sum_k c_k * phi_k(x),   x = b_c / b,
-//
-//     O termo -ln(1-x) reproduz a divergencia de campo forte (Bozza
-//     2002: alpha ~ -ln(b/b_c - 1) + b_bar); a base phi_k corrige o
-//     resto. Ha tres variantes de base (argumento da linha de comando):
-//
-//        A  polinomio x, x^2, ..., x^K
-//        B  idem + (1-x) ln(1-x), o termo sub-dominante de campo forte
-//        C  como B, mas com c1 FIXO no limite de Einstein (4M/b)
-//
-//  2) TESTE. Com os coeficientes congelados, compara o mapa
-//     angulo-na-imagem -> angulo-no-ceu das heuristicas com o mapa
-//     exato visto por um OBSERVADOR ESTATICO a distancia finita r0 --
-//     dado que o ajuste nunca viu (o treino e com observador no
-//     infinito). Erro angular em graus.
-//
-//  Observador estatico (Synge 1966): o angulo local psi entre o raio e a
-//  direcao do buraco negro se relaciona com b por
-//        sin(psi) = (b / r0) * sqrt(1 - 2M/r0).
-//
-//  Unidades geometrizadas, G = c = M = 1.  Rs = 2, b_c = 3*sqrt(3).
-// =====================================================================
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
@@ -49,7 +20,6 @@ static void rk4(double& u, double& w, double h) {
     w += (h/6)*(k1w + 2*k2w + 2*k3w + k4w);
 }
 
-// ---------------- deflexao, observador e fonte no infinito -----------
 static double perielioU(double b) {
     double lo = 0.0, hi = 1.0 / (3.0 * M);
     for (int i = 0; i < 200; i++) {
@@ -69,20 +39,14 @@ static double alphaExato(double b, double h) {
     return NAN;
 }
 
-// ---------------- impacto de um raio visto por observador estatico -----
 static double bSynge(double psi, double r0) {
     return r0 * std::sin(psi) / std::sqrt(1.0 - 2.0 * M / r0);
 }
 
-// ---------------- mapa exato, observador estatico em r0 ----------------
-// psi: angulo LOCAL entre o raio e a direcao do buraco negro.
-// Devolve theta_s: angulo da direcao final no ceu a partir da mesma
-// direcao (negativo = do outro lado). NAN se capturado.
 static double thetaExato(double psi, double r0, double h) {
     const double b  = bSynge(psi, r0);
     const double u0 = 1.0 / r0;
-    // w0 sai da lei de conservacao, com o sinal do sentido do raio:
-    // psi < 90 graus -> aponta para dentro -> u cresce -> w > 0
+
     double w2 = 1.0/(b*b) - u0*u0 + 2.0*M*u0*u0*u0;
     double u = u0, w = (std::cos(psi) >= 0 ? 1.0 : -1.0) * std::sqrt(std::max(w2, 0.0));
     double phi = 0.0;
@@ -91,15 +55,13 @@ static double thetaExato(double psi, double r0, double h) {
         double up = u, pp = phi;
         rk4(u, w, h); phi += h;
         if (u > 1.0 / (2.0 * M)) return NAN;
-        // theta_s = pi - phi_inf: angulo entre a direcao final (no
-        // infinito) e a direcao camera -> buraco negro
+
         if (u <= 0.0) return PI - (pp + (up / (up - u)) * h);
         if (u < uEsc && w < 0.0) return PI - (phi + (PI - std::atan2(u, w)));
     }
     return NAN;
 }
 
-// ---------------- base do modelo ----------------
 static char MODELO = 'B';
 static int  GRAU   = 3;
 
@@ -112,7 +74,6 @@ static void base(double x, std::vector<double>& f) {
     if (MODELO != 'A') f.push_back((1.0 - x) * std::log(1.0 - x));
 }
 
-// minimos quadrados; se fixaC1, c1 e fixo e so o resto e ajustado
 static std::vector<double> ajusta(const std::vector<double>& xs,
                                   const std::vector<double>& ys,
                                   bool fixaC1, double c1fixo) {
@@ -159,28 +120,19 @@ static double alphaModelo(double b, const std::vector<double>& c) {
     return s;
 }
 
-// ---------------------------------------------------------------------
-// Trecho do observador:  I(u0, b) = integral_0^u0 du / sqrt(1/b^2 - u^2 + 2Mu^3)
-// e o angulo varrido entre o infinito e r0 = 1/u0. Com ele, a identidade
-// EXATA para um raio que passa pelo perielio e
-//        theta_s = I(u0, b) - alpha(b).
-// ---------------------------------------------------------------------
-// (a) forma analitica de 1a ordem em M
 static double I1(double r0, double b) {
     double s  = std::min(b / r0, 0.999999);
     double c0 = std::sqrt(1.0 - s * s);
     return std::asin(s) - (M / b) * (1.0 / c0 + c0 - 2.0);
 }
-// (b) quadratura de Gauss-Legendre de 4 pontos em [0, u0]. O integrando
-//     e suave ali enquanto o raio nao estiver quase tangente no
-//     observador (b/r0 longe de 1), o que vale dentro do campo de visao
+
 static double IGauss(double r0, double b) {
     static const double x[4] = {-0.8611363116, -0.3399810436, 0.3399810436, 0.8611363116};
     static const double wg[4] = { 0.3478548451,  0.6521451549, 0.6521451549, 0.3478548451};
     const double u0 = 1.0 / r0;
     double soma = 0.0;
     for (int i = 0; i < 4; i++) {
-        double s = 0.5 * (x[i] + 1.0);          // s em [0,1]
+        double s = 0.5 * (x[i] + 1.0);
         double u = u0 * s;
         double rad = 1.0/(b*b) - u*u + 2.0*M*u*u*u;
         soma += 0.5 * wg[i] * u0 / std::sqrt(std::max(rad, 1e-30));
@@ -194,8 +146,6 @@ static double wrapAng(double a) {
     return a - PI;
 }
 
-// Grava os coeficientes num include GLSL, para o shader usar exatamente
-// o que foi ajustado aqui -- sem copiar numeros a mao.
 static void gravaGLSL(const char* caminho, const std::vector<double>& c,
                       double eMaxGraus) {
     FILE* f = std::fopen(caminho, "w");
@@ -226,9 +176,6 @@ int main(int argc, char** argv) {
     const bool fixaC1 = (MODELO == 'C');
     const double c1Einstein = 4.0 / BC - 1.0;
 
-    // ------------------------------ TREINO ------------------------------
-    // metade das amostras uniforme em x (campo fraco), metade
-    // log-espacada em (1-x) (campo forte)
     std::vector<double> xs, ys, as, bs;
     const int N = 200;
     for (int i = 0; i < N; i++) {
@@ -256,12 +203,11 @@ int main(int argc, char** argv) {
         else std::printf("(o shader espera modelo B grau 3; nada gravado)\n");
     }
 
-    // ------------------------------ TESTE -------------------------------
     const double tanHalf = std::tan(22.5 * PI / 180.0);
     const double r0s[] = {20.0, 52.0, 120.0};
     for (double r0 : r0s) {
         const double psiSh = std::asin((BC / r0) * std::sqrt(1.0 - 2.0*M/r0));
-        const double rSh   = std::tan(std::asin(BC / r0)) / tanHalf;   // legado usa a formula antiga
+        const double rSh   = std::tan(std::asin(BC / r0)) / tanHalf;
         const double mass  = 1.8 * rSh * rSh * rSh * 0.5;
 
         std::printf("\n=== TESTE  r0 = %.0f M (%.0f Rs), sombra psi_sh = %.4f graus ===\n",
@@ -278,13 +224,12 @@ int main(int argc, char** argv) {
             double q = std::tan(psi) / tanHalf;
             double pull = std::min(2.0 * mass / (q*q), 0.85 * q);
             double tL = std::atan((q - pull) * tanHalf);
-            // Einstein: lente fina classica, campo fraco
+
             double tE = psi - (2.0*M/b) * (1.0 + cp);
 
-            // calibrada: theta_s = I(r0, b) - alpha(b), com alpha aprendido
             double aC = alphaModelo(b, c);
-            double tC  = I1(r0, b)     - aC;     // trecho do observador analitico
-            double tCG = IGauss(r0, b) - aC;     // idem por quadratura
+            double tC  = I1(r0, b)     - aC;
+            double tCG = IGauss(r0, b) - aC;
 
             std::printf("%10.4f %10.3f | %9.3f %9.3f %10.5f %10.5f\n", od, te * 180 / PI,
                         std::fabs(wrapAng(tL - te)) * 180 / PI,

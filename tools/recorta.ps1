@@ -1,19 +1,3 @@
-# =====================================================================
-#  recorta.ps1 -- recorta parte de uma imagem para as figuras.
-#
-#  Sem -W/-H: recorta a regiao CENTRAL, com a mesma proporcao, ocupando
-#  a fracao -Fracao da largura e da altura (figuras do artigo: mostram a
-#  sombra e os aneis legiveis mesmo com quatro paineis lado a lado).
-#
-#  Com -X -Y -W -H: recorta esse retangulo e o amplia -Escala vezes, sem
-#  interpolar (detalhe da costura do disco, no README).
-#
-#  Exemplos:
-#    powershell -ExecutionPolicy Bypass -File tools\recorta.ps1 `
-#        -In figs\r_rk4.png -Out figs\r_rk4_c.png -Fracao 0.55
-#    powershell -ExecutionPolicy Bypass -File tools\recorta.ps1 `
-#        -In a.png -Out b.png -X 600 -Y 300 -W 210 -H 170 -Escala 2
-# =====================================================================
 param([Parameter(Mandatory=$true)][string]$In,
       [Parameter(Mandatory=$true)][string]$Out,
       [double]$Fracao = 0.6,

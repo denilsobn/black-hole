@@ -1,14 +1,3 @@
-# =====================================================================
-#  comprime_figuras.ps1
-#
-#  O programa grava PNG com deflate "stored" (sem compressao): e rapido,
-#  nao precisa de zlib nem de libpng, e o arquivo e um PNG valido -- mas
-#  fica grande, e o PDF do artigo passa de 9 MB. Este script regrava as
-#  figuras como PNG comprimido usando o codec do proprio Windows.
-#
-#  Uso (a partir da raiz do projeto):
-#      powershell -ExecutionPolicy Bypass -File tools\comprime_figuras.ps1
-# =====================================================================
 param([string]$Dir = "docs\artigo\figs")
 
 Add-Type -AssemblyName System.Drawing

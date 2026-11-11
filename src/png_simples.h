@@ -1,20 +1,5 @@
 #pragma once
-// =====================================================================
-//  png_simples.h -- gravador de PNG mínimo, sem dependência externa.
-//
-//  Por que existe: o pdflatex aceita PNG, JPG e PDF, mas nao PPM. Sem
-//  isto, gerar as figuras do artigo exigiria um passo manual de
-//  conversao (ImageMagick, um script...), e a reprodutibilidade das
-//  figuras dependeria de uma ferramenta que pode nao estar instalada.
-//
-//  Como funciona: um PNG e uma sequencia de chunks, cada um com
-//  tamanho, tipo, dados e CRC-32. Os dados de imagem (IDAT) vao num
-//  fluxo zlib. Nao precisamos comprimir de verdade: o deflate admite
-//  blocos "stored" (nao comprimidos), que so precisam de um cabecalho
-//  de 5 bytes a cada 65535 bytes de dados. Entao o arquivo sai maior
-//  que um PNG normal, mas e um PNG perfeitamente valido, e o codigo
-//  cabe em 80 linhas sem zlib nem libpng.
-// =====================================================================
+
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
@@ -57,10 +42,9 @@ inline void chunk(std::vector<unsigned char>& out, const char tipo[4],
     be32(out, crc32(out.data() + ini, out.size() - ini));
 }
 
-// pixels: RGBA, 4 bytes por pixel, primeira linha EM CIMA.
 inline bool grava(const std::string& caminho, int w, int h,
                   const unsigned char* rgba) {
-    // ---- linhas filtradas (filtro 0 = None) + adler32 ----
+
     std::vector<unsigned char> bruto;
     bruto.reserve(size_t(h) * (1 + size_t(w) * 3));
     uint32_t a = 1, b = 0;
@@ -76,9 +60,8 @@ inline bool grava(const std::string& caminho, int w, int h,
         }
     }
 
-    // ---- fluxo zlib com blocos deflate "stored" ----
     std::vector<unsigned char> z;
-    z.push_back(0x78); z.push_back(0x01);          // cabecalho zlib
+    z.push_back(0x78); z.push_back(0x01);
     size_t pos = 0;
     while (pos < bruto.size()) {
         const size_t n = (bruto.size() - pos > 65535) ? 65535 : (bruto.size() - pos);
@@ -91,19 +74,18 @@ inline bool grava(const std::string& caminho, int w, int h,
         z.insert(z.end(), bruto.begin() + pos, bruto.begin() + pos + n);
         pos += n;
     }
-    be32(z, (b << 16) | a);                        // adler32
+    be32(z, (b << 16) | a);
 
-    // ---- monta o arquivo ----
     std::vector<unsigned char> out = {137, 'P', 'N', 'G', 13, 10, 26, 10};
 
     std::vector<unsigned char> ihdr;
     be32(ihdr, (uint32_t)w);
     be32(ihdr, (uint32_t)h);
-    ihdr.push_back(8);   // 8 bits por canal
-    ihdr.push_back(2);   // tipo 2 = RGB
-    ihdr.push_back(0);   // deflate
-    ihdr.push_back(0);   // filtro adaptativo
-    ihdr.push_back(0);   // sem entrelacamento
+    ihdr.push_back(8);
+    ihdr.push_back(2);
+    ihdr.push_back(0);
+    ihdr.push_back(0);
+    ihdr.push_back(0);
     chunk(out, "IHDR", ihdr);
     chunk(out, "IDAT", z);
     chunk(out, "IEND", {});
@@ -115,4 +97,4 @@ inline bool grava(const std::string& caminho, int w, int h,
     return ok;
 }
 
-} // namespace png_simples
+}

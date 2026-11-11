@@ -1,25 +1,3 @@
-// =====================================================================
-//  Buraco Negro -- OpenGL 3.3 core (pipeline programavel)
-//
-//  Quatro modelos de curvatura da luz no mesmo programa, para
-//  comparacao direta:
-//
-//    tecla 1 -> shaders/heuristic.frag : heuristica legada (deslocamento
-//               1/r^2 das coordenadas de tela);
-//    tecla 2 -> shaders/geodesic.frag  : RK4 da geodesica do foton em
-//               Schwarzschild -- a verdade de referencia;
-//    tecla 3 -> shaders/lens.frag      : lente fina de Einstein;
-//    tecla 4 -> shaders/lens.frag      : lente fina CALIBRADA (deflexao
-//               aprendida do RK4 por tools/calibra_lente.cpp).
-//
-//  A cena (estrelas, disco de acrecao, Doppler, tone mapping) e a mesma
-//  em todos, definida em shaders/common.glsl -- de propósito, para que a
-//  medicao isole so o modelo de curvatura.
-//
-//  Modos sem janela: --foto (captura), --bench (tempo de parede),
-//  --erro (mapas de erro angular contra o RK4), --perfil (tempo de GPU
-//  por resolucao).
-// =====================================================================
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cmath>
@@ -34,43 +12,34 @@
 
 static const float PI = 3.14159265358979f;
 
-// ---------------------------------------------------------------------
-// Estado da camera. Segue a mesma parametrizacao do codigo legado:
-// azimute, elevacao e raio orbital, com o buraco negro na origem.
-// ---------------------------------------------------------------------
-static float camAzimuth = 0.0f;   // legado: camAnguloX
-static float camElev    = 0.20f;  // legado: camAnguloY (comecava em 0.2)
-static float camDist    = 13.0f;  // legado: camRaio
+static float camAzimuth = 0.0f;
+static float camElev    = 0.20f;
+static float camDist    = 13.0f;
 
-// Sensibilidade do mouse: mesmo valor do codigo legado (rad por pixel)
 static const float MOUSE_SENS = 0.005f;
 
 static bool   mousePressed = false;
 static double lastMouseX = 0.0, lastMouseY = 0.0;
 
-// ---------------------------------------------------------------------
-// Parametros de simulacao
-// ---------------------------------------------------------------------
-static float rs        = 0.5f;   // raio de Schwarzschild (Rs = 2M)
-// 1 = heuristica legada (1/r^2), 2 = RK4 (verdade de referencia),
-// 3 = lente fina de Einstein, 4 = lente fina calibrada
-static int   activeShader = 1;
-static int   outMode      = 0;  // 0 = cor; 1 = direcao no ceu (mapa de erro)
+static float rs        = 0.5f;
 
-static int   skyMode   = 0;      // 0 = estrelas, 1 = grade lat/long
+static int   activeShader = 1;
+static int   outMode      = 0;
+
+static int   skyMode   = 0;
 static bool  diskOn    = true;
-static float diskInner = 3.0f;   // em Rs. ISCO = 6M = 3 Rs
-static float diskOuter = 16.0f;  // em Rs -- disco largo, como o legado
+static float diskInner = 3.0f;
+static float diskOuter = 16.0f;
 static float diskSpin  = 3.0f;
 static float diskBright= 2.2f;
-static float dopplerK  = 0.85f;  // valor do codigo legado
+static float dopplerK  = 0.85f;
 static float exposure  = 1.4f;
 
-static float heurK     = 1.8f;   // forca da heuristica (ver abaixo)
-static float stepPhi   = 0.01f;  // passo do RK4, em radianos
+static float heurK     = 1.8f;
+static float stepPhi   = 0.01f;
 static int   maxSteps  = 1600;
-static int   spp       = 1;      // amostras por pixel por eixo (1..3)
-static bool  legacySplit = false; // reproduz o fatiamento em 2 passagens
+static int   spp       = 1;
+static bool  legacySplit = false;
 
 static bool  vsyncOn   = true;
 
@@ -79,27 +48,16 @@ static int fbHeight = 768;
 
 static bool reloadRequested = false;
 
-// Captura offscreen (--foto). Com fotoPath preenchido o programa
-// renderiza um unico quadro, grava e sai -- sem abrir janela visivel.
 static std::string fotoPath;
 static int    fotoW    = 1024;
 static int    fotoH    = 768;
-static double fotoTime = 3.0;   // instante fixo, para a figura ser reprodutivel
+static double fotoTime = 3.0;
 
-// Benchmark offscreen (--bench N). Mede o tempo de N quadros num
-// framebuffer proprio, sem v-sync, sem compositor e sem depender de a
-// janela estar visivel -- e assim que saem os numeros do artigo.
 static int benchFrames = 0;
 
-// Mapa de erro (--erro PREFIXO) e perfil de GPU (--perfil ARQUIVO.dat).
 static std::string erroPrefix;
 static std::string perfilPath;
 
-// ---------------------------------------------------------------------
-// Localizacoes de uniforms, resolvidas uma vez por programa.
-// glUniform* com location -1 e um no-op silencioso, entao os uniforms
-// que existem so em um dos shaders podem ser enviados sempre.
-// ---------------------------------------------------------------------
 struct Uniforms {
     GLint resolution, camPos, camForward, camRight, camUp, tanHalfFov, aspect;
     GLint rs, time, exposure;
@@ -167,19 +125,8 @@ static void apagaProgramas() {
     progHeuristic.id = progGeodesic.id = progLens.id = 0;
 }
 
-// ---------------------------------------------------------------------
-// Raio APARENTE da sombra, em unidades de NDC vertical.
-//
-// A sombra de Schwarzschild vista de r0 tem raio angular
-//     sin(theta) = b_c / r0 ,   b_c = 3*sqrt(3)*M = 2.598*Rs
-// e um angulo theta cai na tela em  tan(theta)/tan(fov/2)  unidades de
-// NDC. Isto amarra as constantes da heuristica -- que no codigo legado
-// eram numeros fixos em espaco de tela (mass = 0.009, eventHorizon =
-// 0.1) -- ao tamanho real do buraco negro na imagem. Sem isso a
-// heuristica se desmancha assim que voce muda o zoom ou o Rs.
-// ---------------------------------------------------------------------
 static float shadowRadiusNDC(float tanHalfFov) {
-    // Observador ESTATICO (Synge): sin(psi_sombra) = (b_c/r0) sqrt(1 - Rs/r0)
+
     const float bCrit = 2.59807621f * rs;
     float s = bCrit / std::max(camDist, 1e-4f)
             * std::sqrt(std::max(1.0f - rs / std::max(camDist, 1e-4f), 0.0f));
@@ -231,9 +178,6 @@ static void resetParams() {
     spp = 1; legacySplit = false;
 }
 
-// ---------------------------------------------------------------------
-// Callbacks
-// ---------------------------------------------------------------------
 static void framebufferSizeCallback(GLFWwindow*, int w, int h) {
     fbWidth  = (w > 0) ? w : 1;
     fbHeight = (h > 0) ? h : 1;
@@ -258,12 +202,9 @@ static void cursorPosCallback(GLFWwindow*, double x, double y) {
     lastMouseX = x;
     lastMouseY = y;
 
-    // Mesmos sinais e mesma sensibilidade do codigo legado
     camAzimuth += dx * MOUSE_SENS;
     camElev    += dy * MOUSE_SENS;
 
-    // O legado nao limitava a elevacao, o que deixava a camera virar de
-    // cabeca para baixo ao passar do polo (o vetor "up" degenerava).
     camElev = std::clamp(camElev, -1.45f, 1.45f);
 }
 
@@ -327,9 +268,6 @@ static void keyCallback(GLFWwindow* win, int key, int, int action, int) {
     }
 }
 
-// Teclas de ajuste continuo (mantidas pressionadas). Escalonadas por dt
-// para que a velocidade nao dependa do FPS -- com v-sync desligado o
-// codigo legado ficava incontrolavel.
 static void processContinuousInput(GLFWwindow* w, float dt) {
     auto down = [&](int k) { return glfwGetKey(w, k) == GLFW_PRESS; };
 
@@ -364,16 +302,13 @@ static void processContinuousInput(GLFWwindow* w, float dt) {
     exposure = std::clamp(exposure, 0.10f, 8.0f);
 }
 
-// ---------------------------------------------------------------------
-// Carga / recarga dos dois programas
-// ---------------------------------------------------------------------
 static bool loadAllShaders(const std::string& dir) {
     GLuint h = loadProgram(dir, "fullscreen.vert", "heuristic.frag");
     GLuint g = loadProgram(dir, "fullscreen.vert", "geodesic.frag");
     GLuint l = loadProgram(dir, "fullscreen.vert", "lens.frag");
 
     if (!h || !g || !l) {
-        // Falhou: descarta o que compilou e mantem o que ja estava rodando
+
         if (h) glDeleteProgram(h);
         if (g) glDeleteProgram(g);
         if (l) glDeleteProgram(l);
@@ -389,11 +324,6 @@ static bool loadAllShaders(const std::string& dir) {
     cacheUniforms(progGeodesic);
     cacheUniforms(progLens);
 
-    // Uniform nao usado pelo shader e removido pelo compilador e devolve
-    // location -1. Isso e um no-op silencioso no glUniform, o que ja
-    // custou uma sessao de depuracao: uResolution passou a ser usada
-    // (supersampling) e, se por algum motivo vier -1, px = 2/0 gera NaN
-    // e a tela inteira fica branca.
     std::printf("[uniforms] heuristico: uResolution=%d uSPP=%d | geodesico: uResolution=%d uSPP=%d\n",
                 progHeuristic.u.resolution, progHeuristic.u.spp,
                 progGeodesic.u.resolution,  progGeodesic.u.spp);
@@ -403,42 +333,29 @@ static bool loadAllShaders(const std::string& dir) {
 
 static GLuint gVao = 0, gVbo = 0;
 
-// ---------------------------------------------------------------------
-// Desenha um quadro completo no framebuffer que estiver ligado.
-// Extraida do laco principal para que a captura offscreen (--foto)
-// use exatamente o mesmo caminho de renderizacao da janela.
-// ---------------------------------------------------------------------
 static void renderFrame(const Program& p, double t, int w, int h) {
-    // Camera orbital. Mesma parametrizacao do codigo legado:
-    //   camX = R cos(elev) sin(azim)
-    //   camY = R sin(elev)
-    //   camZ = R cos(elev) cos(azim)
+
     const float ce = std::cos(camElev), se = std::sin(camElev);
     const float ca = std::cos(camAzimuth), sa = std::sin(camAzimuth);
 
     const float camPos[3] = { camDist * ce * sa, camDist * se, camDist * ce * ca };
 
-    // forward = -normalize(camPos)  (a camera sempre olha para o BH)
     float fx = -camPos[0], fy = -camPos[1], fz = -camPos[2];
     const float flen = std::sqrt(fx*fx + fy*fy + fz*fz);
     fx /= flen; fy /= flen; fz /= flen;
 
-    // "up" da orbita, igual ao gluLookAt do codigo legado
     const float upX = -se * sa, upY = ce, upZ = -se * ca;
 
-    // right = normalize(forward x up)
     float rx = fy * upZ - fz * upY;
     float ry = fz * upX - fx * upZ;
     float rz = fx * upY - fy * upX;
     const float rlen = std::sqrt(rx*rx + ry*ry + rz*rz);
     rx /= rlen; ry /= rlen; rz /= rlen;
 
-    // up ortonormal = right x forward
     const float ux = ry * fz - rz * fy;
     const float uy = rz * fx - rx * fz;
     const float uz = rx * fy - ry * fx;
 
-    // FOV vertical de 45 graus (igual ao gluPerspective(45,...) legado)
     const float tanHalfFov = std::tan(PI / 180.0f * 22.5f);
     const float aspect = float(w) / float(h);
 
@@ -484,12 +401,6 @@ static void renderFrame(const Program& p, double t, int w, int h) {
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-// ---------------------------------------------------------------------
-// Captura offscreen: renderiza um quadro num framebuffer proprio e
-// grava um PPM (P6). Nao depende da janela estar visivel -- e o unico
-// jeito confiavel de gerar as figuras do artigo sempre no mesmo estado,
-// e funciona mesmo com a tela bloqueada ou em suspensao.
-// ---------------------------------------------------------------------
 static bool salvaFoto(const Program& p, const std::string& path,
                       int w, int h, double t) {
     GLuint fbo = 0, tex = 0;
@@ -521,8 +432,6 @@ static bool salvaFoto(const Program& p, const std::string& path,
     glDeleteFramebuffers(1, &fbo);
     glDeleteTextures(1, &tex);
 
-    // O OpenGL entrega a primeira linha EMBAIXO; PNG e PPM esperam de
-    // cima. Inverte no lugar, trocando linha por linha.
     const size_t passo = size_t(w) * 4;
     std::vector<unsigned char> tmp(passo);
     for (int y = 0; y < h / 2; y++) {
@@ -540,7 +449,7 @@ static bool salvaFoto(const Program& p, const std::string& path,
     if (ehPng) {
         ok = png_simples::grava(path, w, h, px.data());
     } else {
-        // PPM (P6), caso voce peca outra extensao
+
         FILE* f = std::fopen(path.c_str(), "wb");
         if (!f) { std::cerr << "[foto] nao consegui abrir " << path << "\n"; return false; }
         std::fprintf(f, "P6\n%d %d\n255\n", w, h);
@@ -558,14 +467,6 @@ static bool salvaFoto(const Program& p, const std::string& path,
     return true;
 }
 
-// ---------------------------------------------------------------------
-// Mede o custo de renderizacao num framebuffer offscreen.
-//
-// Preferivel ao FPS da janela: sem v-sync, sem compositor de janelas e
-// sem depender de a tela estar acordada (uma tela em suspensao trava a
-// GPU em 30 Hz e falseia a medida). Faz aquecimento antes de medir,
-// porque o primeiro quadro paga a compilacao final do shader no driver.
-// ---------------------------------------------------------------------
 static void benchmark(const Program& p, int n, int w, int h,
                       const char* nome) {
     GLuint fbo = 0, tex = 0;
@@ -582,7 +483,7 @@ static void benchmark(const Program& p, int n, int w, int h,
         return;
     }
 
-    for (int i = 0; i < 20; i++) renderFrame(p, 3.0, w, h);   // aquecimento
+    for (int i = 0; i < 20; i++) renderFrame(p, 3.0, w, h);
     glFinish();
 
     const double t0 = glfwGetTime();
@@ -601,21 +502,6 @@ static void benchmark(const Program& p, int n, int w, int h,
     std::fflush(stdout);
 }
 
-// =====================================================================
-//  MAPA DE ERRO VISUAL
-//
-//  Subtrair duas imagens RGB de um campo de estrelas mede pouco: uma
-//  estrela deslocada de um pixel da erro maximo, e uma estrela no lugar
-//  certo mas um pouco mais fraca da erro quase nulo. O que a heuristica
-//  pode errar e a DIRECAO de onde cada pixel busca o ceu -- entao e isso
-//  que comparamos. Cada programa roda em modo diagnostico (uOutMode = 1)
-//  e grava, num framebuffer de ponto flutuante, a direcao final no ceu
-//  do raio que passa pelo centro de cada pixel (e se ele foi capturado).
-//  O erro e o angulo entre essa direcao e a do RK4.
-//
-//  O disco e desligado aqui: ele esta a distancia finita, e o que se
-//  mede e a lente sobre o ceu distante.
-// =====================================================================
 struct DirImg { std::vector<float> px; int w = 0, h = 0; };
 
 static DirImg renderDirecoes(int modelo, int w, int h) {
@@ -645,9 +531,6 @@ static DirImg renderDirecoes(int modelo, int w, int h) {
     return img;
 }
 
-// Rampa sequencial de UM tom (azul, claro -> escuro): erro pequeno fica
-// claro, erro grande escuro. Mesmos 13 passos da legenda desenhada pelo
-// pgfplots no artigo (docs/artigo/main.tex), para as cores baterem.
 static void corRampa(double t, unsigned char* rgb) {
     static const unsigned char R[13][3] = {
         {0xcd,0xe2,0xfb},{0xb7,0xd3,0xf6},{0x9e,0xc5,0xf4},{0x86,0xb6,0xef},
@@ -667,7 +550,6 @@ static bool mapaDeErro(const std::string& prefixo, int w, int h) {
     const DirImg gt = renderDirecoes(2, w, h);
     if (gt.px.empty()) { std::cerr << "[erro] framebuffer float indisponivel\n"; return false; }
 
-    // Escala logaritmica compartilhada: 10^-3 a 10^2 graus
     const double LOG_MIN = -3.0, LOG_MAX = 2.0;
 
     std::string relatorio;
@@ -691,17 +573,17 @@ static bool mapaDeErro(const std::string& prefixo, int w, int h) {
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 const size_t i = (size_t(y) * size_t(w) + size_t(x)) * 4;
-                // PNG e de cima para baixo; o framebuffer, de baixo para cima
+
                 unsigned char* o = &rgba[(size_t(h - 1 - y) * size_t(w) + size_t(x)) * 4];
                 const bool gEsc = gt.px[i + 3] > 0.5f;
                 const bool hEsc = hi.px[i + 3] > 0.5f;
 
-                if (!gEsc && !hEsc) {                 // os dois na sombra
+                if (!gEsc && !hEsc) {
                     o[0] = 0x89; o[1] = 0x87; o[2] = 0x81;
                     continue;
                 }
                 foraSombra++;
-                if (gEsc != hEsc) {                   // um ve ceu, o outro a sombra
+                if (gEsc != hEsc) {
                     diverg++;
                     corRampa(1.0, o);
                     continue;
@@ -743,15 +625,6 @@ static bool mapaDeErro(const std::string& prefixo, int w, int h) {
     return true;
 }
 
-// =====================================================================
-//  PERFIL DE GPU POR RESOLUCAO
-//
-//  Tempo de GPU medido com timer queries (GL_TIME_ELAPSED, nucleo do
-//  OpenGL 3.3), em framebuffer fora da tela, sem v-sync. Para cada
-//  modelo e resolucao: 5 quadros de aquecimento, uma sonda para estimar
-//  o custo, e entao N quadros cronometrados (N ~ 1,5 s de GPU, entre 15
-//  e 1500). Reporta a MEDIANA, que ignora os soluços do sistema.
-// =====================================================================
 static double gpuMsMediana(int modelo, int w, int h) {
     const int modeloAntes = activeShader;
     activeShader = modelo;
@@ -795,7 +668,7 @@ static bool perfilGPU(const std::string& caminho) {
     outMode = 0;
     static const int res[][2] = {{640, 480}, {1280, 720}, {1920, 1080},
                                  {2560, 1440}, {3840, 2160}};
-    const int modelos[] = {2, 4, 3, 1};     // RK4, calibrada, Einstein, legado
+    const int modelos[] = {2, 4, 3, 1};
 
     FILE* f = std::fopen(caminho.c_str(), "w");
     if (!f) { std::cerr << "[perfil] nao consegui abrir " << caminho << "\n"; return false; }
@@ -832,14 +705,6 @@ static bool perfilGPU(const std::string& caminho) {
     return true;
 }
 
-// Uso:  buraco_negro [1|2] [--grade] [--legado] [--spp2|--spp3]
-//                   [--sem-disco] [--sem-vsync]
-//                   [--foto arq.ppm] [--res 1600x1200] [--tempo 3.0]
-//                   [--bench 200] [--dphi 0.01] [--passos 1600] [--forca 1.8]
-//   1 = comeca no shader heuristico (padrao)
-//   2 = comeca no shader geodesico
-// Serve para gerar as figuras do artigo sempre no mesmo estado, sem
-// depender de apertar teclas depois de abrir.
 static void parseArgs(int argc, char** argv) {
     for (int i = 1; i < argc; i++) {
         const std::string a = argv[i];
@@ -882,14 +747,10 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    // Contexto OpenGL 3.3 CORE: pipeline programavel, sem glBegin/glEnd
-    // e sem a pilha de matrizes do OpenGL legado.
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    // No modo --foto a janela existe so para carregar o contexto OpenGL:
-    // mantendo-a invisivel, a captura funciona com a tela bloqueada,
-    // em suspensao ou por acesso remoto.
+
     if (!fotoPath.empty() || benchFrames > 0 || !erroPrefix.empty() || !perfilPath.empty())
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 #ifdef __APPLE__
@@ -925,11 +786,6 @@ int main(int argc, char** argv) {
     std::cout << "OpenGL " << glGetString(GL_VERSION)
               << " | " << glGetString(GL_RENDERER) << "\n";
 
-    // -----------------------------------------------------------------
-    // Quad de tela cheia: 2 triangulos cobrindo o NDC [-1,1]. Toda a
-    // cena (estrelas + disco + distorcao) e calculada no fragment
-    // shader, por pixel, como um ray tracer.
-    // -----------------------------------------------------------------
     const float quadVerts[] = {
         -1.0f, -1.0f,   1.0f, -1.0f,   1.0f,  1.0f,
         -1.0f, -1.0f,   1.0f,  1.0f,  -1.0f,  1.0f
@@ -996,7 +852,7 @@ int main(int argc, char** argv) {
         double now = glfwGetTime();
         float dt = float(now - lastTime);
         lastTime = now;
-        dt = std::min(dt, 0.1f);   // evita saltos gigantes apos um travamento
+        dt = std::min(dt, 0.1f);
 
         if (reloadRequested) {
             reloadRequested = false;
@@ -1012,7 +868,6 @@ int main(int argc, char** argv) {
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        // ---- FPS na barra de titulo ----
         frames++;
         if (now - titleTime >= 0.4) {
             fps = float(frames / (now - titleTime));

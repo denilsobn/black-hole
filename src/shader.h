@@ -13,9 +13,6 @@
 #include <limits.h>
 #endif
 
-// Retorna a pasta onde o .exe esta, independente do diretorio de
-// trabalho atual do processo (que muda conforme voce da F5 na IDE,
-// da duplo-clique no Explorer, ou roda de outra pasta no terminal).
 inline std::string getExecutableDir() {
 #ifdef _WIN32
     char buffer[MAX_PATH];
@@ -41,13 +38,6 @@ inline bool fileExists(const std::string& path) {
     return f.good();
 }
 
-// Onde procurar os .vert/.frag/.glsl.
-//
-// Preferimos a pasta shaders/ do CODIGO-FONTE (SHADER_SOURCE_DIR, que o
-// CMake define no build) para que o recarregamento a quente com F5 pegue
-// o arquivo que voce acabou de editar, sem precisar recompilar nem
-// copiar nada. Se essa pasta nao existir (build distribuido para outra
-// maquina), cai para a copia que fica ao lado do .exe.
 inline std::string findShaderDir() {
 #ifdef SHADER_SOURCE_DIR
     {
@@ -58,7 +48,6 @@ inline std::string findShaderDir() {
     return getExecutableDir() + "/shaders";
 }
 
-// Le o conteudo inteiro de um arquivo texto
 inline std::string readFile(const std::string& path, bool* ok = nullptr) {
     std::ifstream file(path);
     if (!file.is_open()) {
@@ -72,18 +61,6 @@ inline std::string readFile(const std::string& path, bool* ok = nullptr) {
     return ss.str();
 }
 
-// ---------------------------------------------------------------------
-// GLSL nao tem #include. Este pre-processador minimo resolve linhas da
-// forma
-//        #include "arquivo.glsl"
-// substituindo-as pelo conteudo do arquivo (recursivamente), com os
-// caminhos relativos a pasta de shaders.
-//
-// Isso existe para que common.glsl -- campo de estrelas, disco de
-// acrecao e tone mapping -- seja literalmente o MESMO codigo nos dois
-// shaders. Sem isso a comparacao heuristica x geodesica do artigo
-// ficaria contaminada por diferencas acidentais entre duas copias.
-// ---------------------------------------------------------------------
 inline std::string resolveIncludes(const std::string& source,
                                    const std::string& dir,
                                    bool* ok,
@@ -98,7 +75,7 @@ inline std::string resolveIncludes(const std::string& source,
     std::string out, line;
 
     while (std::getline(in, line)) {
-        // Detecta:  espacos  #include  espacos  "nome"
+
         size_t p = line.find_first_not_of(" \t");
         if (p != std::string::npos && line.compare(p, 8, "#include") == 0) {
             size_t q1 = line.find('"', p + 8);
@@ -126,9 +103,6 @@ inline std::string resolveIncludes(const std::string& source,
     return out;
 }
 
-// Imprime o fonte final numerado. Como o #include muda a numeracao das
-// linhas, sem isso as mensagens do driver ("erro na linha 214") ficam
-// impossiveis de localizar.
 inline void dumpNumbered(const std::string& src) {
     std::stringstream in(src);
     std::string line;
@@ -160,9 +134,6 @@ inline GLuint compileShader(GLenum type, const std::string& source,
     return shader;
 }
 
-// Compila e linka um programa a partir de dois arquivos: vertex + fragment.
-// Devolve 0 em caso de falha (o chamador decide se aborta ou mantem o
-// programa antigo -- e o que o recarregamento com F5 faz).
 inline GLuint loadProgram(const std::string& dir,
                           const std::string& vertName,
                           const std::string& fragName) {
